@@ -12,6 +12,8 @@ internal class TrayIconService : IDisposable
     private readonly NotifyIcon _notifyIcon;
     private bool _disposed;
 
+    public bool IsExiting { get; private set; }
+
     public TrayIconService(Window mainWindow)
     {
         _mainWindow = mainWindow;
@@ -48,8 +50,9 @@ internal class TrayIconService : IDisposable
 
     public void Exit()
     {
+        IsExiting = true;
         _notifyIcon.Visible = false;
-        _mainWindow.Close();
+        System.Windows.Application.Current.Shutdown();
     }
 
     private ContextMenuStrip CreateContextMenu()

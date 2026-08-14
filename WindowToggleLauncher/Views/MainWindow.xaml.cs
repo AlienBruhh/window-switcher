@@ -24,6 +24,12 @@ public partial class MainWindow : Window
 
     private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        if (_trayIcon?.IsExiting == true)
+        {
+            _trayIcon.Dispose();
+            return;
+        }
+
         e.Cancel = true;
         _trayIcon?.Hide();
     }
