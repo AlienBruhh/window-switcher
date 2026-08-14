@@ -100,12 +100,14 @@ internal class HotkeyService : IDisposable
 
     public void UnregisterAll()
     {
+        var ids = _hotkeys.Keys.ToArray();
+        _hotkeys.Clear();
+
         var handle = new System.Windows.Interop.WindowInteropHelper(_window).Handle;
-        foreach (var id in _hotkeys.Keys)
+        foreach (var id in ids)
         {
             NativeMethods.UnregisterHotKey(handle, id);
         }
-        _hotkeys.Clear();
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
