@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Win32;
 using WindowToggleLauncher.ViewModels;
 
@@ -6,6 +7,7 @@ namespace WindowToggleLauncher.Views;
 
 public partial class AppConfigurationWindow : Window
 {
+    private bool _isCapturingHotkey;
     public bool DeleteRequested { get; private set; }
 
     public AppConfigurationWindow(AppButtonViewModel viewModel)
@@ -38,6 +40,50 @@ public partial class AppConfigurationWindow : Window
         }
     }
 
+    private void RegisterHotkeyButton_Click(object sender, RoutedEventArgs e)
+    {
+        _isCapturingHotkey = true;
+        RegisterHotkeyButton.Content = "Press key";
+        HotkeyCaptureStatusTextBlock.Text = "Press a key combination. Press Esc to cancel.";
+        HotkeyTextBox.Focus();
+    }
+
+    private void HotkeyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (!_isCapturingHotkey)
+            return;
+
+        e.Handled = true;
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+
+        if (key == Key.Escape)
+        {
+            StopHotkeyCapture("Hotkey capture cancelled.");
+            return;
+        }
+
+        if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or
+            Key.LeftShift or Key.RightShift or Key.LWin or Key.RWin)
+            return;
+
+        var parts = new List<string>();
+        var modifiers = Keyboard.Modifiers;
+        if (modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
+        if (modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
+        if (modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
+        if (modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
+        parts.Add(key.ToString());
+
+        HotkeyTextBox.Text = string.Join("+", parts);
+        StopHotkeyCapture("Hotkey captured. Click Save to apply it.");
+    }
+
+    private void StopHotkeyCapture(string message)
+    {
+        _isCapturingHotkey = false;
+        RegisterHotkeyButton.Content = "Register";
+        HotkeyCaptureStatusTextBlock.Text = message;
+    }
     private void SaveButton_Click(object sender, RoutedEventArgs e)
     {
         if (DataContext is AppButtonViewModel vm)
