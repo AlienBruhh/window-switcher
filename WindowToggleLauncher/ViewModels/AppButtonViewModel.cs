@@ -55,6 +55,19 @@ public class AppButtonViewModel : ObservableObject
         set => SetProperty(ref _isMinimized, value);
     }
 
+    private string? _iconBase64;
+    public string? IconBase64
+    {
+        get
+        {
+            if (_iconBase64 == null && !string.IsNullOrWhiteSpace(_app.ExecutablePath))
+            {
+                _iconBase64 = ProcessService.GetAppIconBase64(_app.ExecutablePath);
+            }
+            return _iconBase64;
+        }
+    }
+
     public ICommand ToggleCommand { get; }
 
     public async Task ToggleAsync()
@@ -91,12 +104,14 @@ public class AppButtonViewModel : ObservableObject
 
     public void UpdateFromEdit(string name, string executablePath, string? arguments)
     {
+        _iconBase64 = null;
         _app.Name = name;
         _app.ExecutablePath = executablePath;
         _app.Arguments = arguments;
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(ExecutablePath));
         OnPropertyChanged(nameof(Arguments));
+        OnPropertyChanged(nameof(IconBase64));
         UpdateState();
     }
 }

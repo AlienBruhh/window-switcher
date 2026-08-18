@@ -14,6 +14,8 @@ public partial class App : Application
     private EventWaitHandle? _activationEvent;
     private bool _isFirstInstance;
 
+    private MainViewModel? _mainViewModel;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -29,9 +31,9 @@ public partial class App : Application
         }
 
         var configService = new ConfigurationService();
-        var mainViewModel = new MainViewModel(configService, Dispatcher);
-        var mainWindow = new MainWindow { DataContext = mainViewModel };
-        mainWindow.Loaded += (s, args) => mainViewModel.InitializeHotkeys();
+        _mainViewModel = new MainViewModel(configService, Dispatcher);
+        var mainWindow = new MainWindow { DataContext = _mainViewModel };
+        mainWindow.Loaded += (s, args) => _mainViewModel.InitializeHotkeys();
         MainWindow = mainWindow;
         mainWindow.InitializeTrayIcon();
         mainWindow.Show();
@@ -68,6 +70,14 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        try
+        {
+            _mainViewModel?.StopServerAsync().GetAwaiter().GetResult();
+        }
+        catch
+        {
+        }
+
         _activationEvent?.Set();
         _activationEvent?.Dispose();
         if (_isFirstInstance)

@@ -81,4 +81,26 @@ internal static class ProcessService
         {
         }
     }
+
+    public static string? GetAppIconBase64(string executablePath)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(executablePath) || !File.Exists(executablePath))
+                return null;
+
+            using var icon = System.Drawing.Icon.ExtractAssociatedIcon(executablePath);
+            if (icon == null)
+                return null;
+
+            using var bitmap = icon.ToBitmap();
+            using var stream = new MemoryStream();
+            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            return "data:image/png;base64," + Convert.ToBase64String(stream.ToArray());
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

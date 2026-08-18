@@ -7,13 +7,15 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyTitle>WindowToggleLauncher</AssemblyTitle>
-    <AssemblyDescription>Window Toggle Launcher</AssemblyDescription>
-    <Version>1.0.0</Version>
+    <AssemblyTitle>DeskDeck - Windows App Switcher &amp; Phone Remote</AssemblyTitle>
+    <AssemblyDescription>Turn your phone into a free touch Stream Deck and hotkey app switcher for Windows using instant QR pairing.</AssemblyDescription>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>

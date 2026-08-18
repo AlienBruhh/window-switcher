@@ -1,9 +1,11 @@
 # Build output
 [Bb]in/
 [Oo]bj/
+publish/
 
 # Visual Studio and user-specific files
 .vs/
 *.user
 *.suo
 *.csproj.user
+
